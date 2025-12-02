@@ -1,56 +1,61 @@
-
-
-let books = [
-  { id: 1, title: 'Things Fall Apart', author: 'Chinua Achebe' },
-  { id: 2, title: 'Purple Hibiscus', author: 'Chimamanda Ngozi Adichie' },
-  { id: 3, title: 'Wetin man go do', author: 'Armour' }
-];
+const PrismaClient = require('@prisma/client').PrismaClient;
+const prisma = new PrismaClient();
 
 
 // CRUD Operations [Create, Read, Update, Delete]
 
 // Get all books
-const getAllBooks = (req, res) => {
-  res.json(books);
+const getAllBooks = async(req, res) => {
+  const books = await prisma.book.findMany();
+  res.status(200).json(books);
 };
 
 // Get one book
-const getBookById = (req, res) => {
+const getBookById = async (req, res) => {
   const id = parseInt(req.params.bookId);
-  const book = books.find(b => b.id === id);
+  const book = await prisma.book.findUnique({
+    where: {
+      id: id
+    }
+  });
   if (!book) return res.status(404).json({ message: 'Book not found' });
-  res.json(book);
+  res.status(200).json(book);
 };
 
-const addBook = (req, res) => {
-  const { title, author } = req.body;
+const addBook = async (req, res) => {
+  const { title, author, category } = req.body;
 
   const newBook = {
-    id: books.length + 1,
-    title,
-    author
+    title, 
+    author, 
+    category
   };
-  books.push(newBook);
-  res.status(201).json(newBook);
+  const createdBook = await prisma.book.create({
+    data: newBook
+  });
+  res.status(201).json(createdBook);
 }
 
-const updateBook = (req, res) => {
+const updateBook = async (req, res) => {
   const id = parseInt(req.params.bookId);
-  const book = books.find(b => b.id === id);
-  if (!book) return res.status(404).json({ message: 'Book not found' });
 
-  const { title, author } = req.body;
-  book.title = title || book.title;
-  book.author = author || book.author;
-  res.status(200).json(book);
+  const { title, author, category } = req.body;
+  const updatedBook = await prisma.book.update({
+    where: { id: id },
+    data: { title, author, category }
+  });
+  if (!updatedBook) return res.status(404).json({ message: 'Book not found' });
+  res.status(200).json(updatedBook);
 }
 
-const deleteBook = (req, res) => {
+const deleteBook = async (req, res) => {
   const id = parseInt(req.params.bookId);
-  books = books.filter(b => b.id !== id);
+  const deletedBook = await prisma.book.delete({
+    where: { id: id }
+  });
+  if (!deletedBook) return res.status(404).json({ message: 'Book not found' });
   res.status(200).json({ message: 'Book deleted' });
 }
-
 
 module.exports = {
   getAllBooks,

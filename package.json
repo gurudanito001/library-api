@@ -4,12 +4,22 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon",
+    "start": "node server.js",
+    "watch": "",
+    "ext": "js,json",
+    "exec": "node src/server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^6.0.0",
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11",
+    "prisma": "^6.0.0"
   }
 }
