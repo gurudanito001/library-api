@@ -17,6 +17,19 @@ const getAllUsers = async (req, res) => {
 }
 
 
+// GET USER BY ID
+const getUserById = async (req, res) => {
+  try {
+    const id = parseInt(req.user.userId);
+    const user = await prisma.user.findUnique({
+      where: { id }
+    });
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 // REGISTER USER
 const register = async (req, res) => {
@@ -62,7 +75,7 @@ const login = async (req, res) => {
     // create token
     const token = jwt.sign(
       { userId: user.id },
-      "SECRET_KEY", // Ideally from process.env.JWT_SECRET
+      process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
@@ -78,5 +91,6 @@ const login = async (req, res) => {
 module.exports = {
   register,
   login,
-  getAllUsers
+  getAllUsers,
+  getUserById
 };
