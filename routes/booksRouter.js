@@ -10,7 +10,7 @@ router.get('/', getAllBooks); // Read all
 router.get('/:bookId', getBookById); // Read one
 router.post('/', addBook); // Create 
 router.put('/:bookId', updateBook); // Update
-router.delete('/:bookId', deleteBook); // Delete
+router.delete('/:bookId', deleteBook); // Delete a book
 
 
 module.exports = router;
